@@ -2,6 +2,7 @@ require 'uri'
 
 class Params
   def initialize(req, route_params)
+    #req.query_string
     @params = route_params.merge(req.query)
   end
 
