@@ -4,8 +4,14 @@ require_relative 'session'
 
 class ControllerBase
   attr_reader :params
+protected
+  attr_accessor :req, :res
+public
 
-  def initialize(req, res, route_params)
+  def initialize(req, res, route_params={})
+    @req = req
+    @res = res
+    @params = route_params
   end
 
   def session
@@ -20,6 +26,8 @@ class ControllerBase
   end
 
   def render_content(content, type)
+    @res.content_type = type
+    @res.body = content
   end
 
   def render(template_name)
