@@ -14,11 +14,11 @@ class StatusController < ControllerBase
   def index
     statuses = ["s1", "s2", "s3"]
 
-    render_content(statuses.to_json, "text/json")
+    render_content(statuses.to_json, "text/html")
   end
 
   def show
-    render_content("status ##{params[:id]}", "text/text")
+    render_content("#{params} status ##{params[:id]}", "text/html")
   end
 end
 
@@ -26,7 +26,7 @@ class UserController < ControllerBase
   def index
     users = ["u1", "u2", "u3"]
 
-    render_content(users.to_json, "text/json")
+    render_content(users.to_json, "text/html")
   end
 end
 
@@ -37,7 +37,7 @@ server.mount_proc '/' do |req, res|
     get Regexp.new("^/users$"), UserController, :index
 
     # uncomment this when you get to route params
-#    get Regexp.new("^/statuses/(?<id>\\d+)$"), StatusController, :show
+   get Regexp.new("^/statuses/(?<id>\\d+)$"), StatusController, :show
   end
 
   route = router.run(req, res)

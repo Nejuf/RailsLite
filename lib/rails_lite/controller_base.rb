@@ -9,7 +9,7 @@ protected
   attr_accessor :req, :res
 public
 
-  def initialize(req, res, route_params={})
+  def initialize(req, res, route_params)
     @req = req
     @res = res
     @params = Params.new(req, route_params)
@@ -52,6 +52,10 @@ public
   end
 
   def invoke_action(name)
+    send(name)
+    unless already_rendered?
+      render(name)
+    end
   end
 
   def get_controller_name

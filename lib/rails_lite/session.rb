@@ -1,10 +1,13 @@
 require 'json'
 require 'webrick'
+require 'debugger'
 
 class Session
 	COOKIE_NAME = "_rails_lite_app"
   def initialize(req)
-  	cookie = req.cookies.select{ |cookie| cookie.name == COOKIE_NAME }.first
+    debugger
+  	cookie = req.cookies.select{ |cookie| 
+      cookie.name == COOKIE_NAME }.first
 		if cookie.nil?
 			@data = {}
 		else

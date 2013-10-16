@@ -4,23 +4,27 @@ class Route
   def initialize(pattern, http_method, controller_class, action_name)
     @pattern = pattern
     @http_method = http_method.downcase.to_sym
-    @controller_class = controller_class.constantize
+    @controller_class = controller_class
     @action_name = action_name
   end
 
   def matches?(req)
-    p "matches"
-    p pattern
-    p req.path
-    p http_method
-    p req.request_method.downcase.to_sym
-    p http_method == req.request_method.downcase.to_sym
-    p pattern.match(req.path)
     http_method == req.request_method.downcase.to_sym && pattern.match(req.path)
   end
 
   def run(req, res)
-    controller_class.new(req, res).invoke_action(action_name)
+    p "Route Run"
+    p "pattern: #{pattern}"
+    p "captures: #{pattern.match(req.path).captures}"
+    p "named_captures: #{pattern.named_captures}"
+    p "names: #{pattern.names}"
+    # named_captures value is an index, so we're better off using #names and #captures
+    route_params = {}
+    captures = pattern.match(req.path).captures
+    pattern.names.each_with_index do |param_name, index|
+      route_params[param_name.to_sym] = captures[index]
+    end    
+    controller_class.new(req, res, route_params).invoke_action(action_name)
   end
 end
 
@@ -28,22 +32,42 @@ class Router
   attr_reader :routes
 
   def initialize
+    @routes = []
   end
 
-  def add_route(pattern, method, controller_class, action_name)
+  def add_route(pattern, http_method, controller_class, action_name)
+    @routes << Route.new(pattern, http_method, controller_class, action_name)
   end
 
   def draw(&proc)
+    p "draw"
+    instance_eval &proc
   end
 
   [:get, :post, :put, :delete].each do |http_method|
-    # add these helpers in a loop here
-    # define method - match url to request
+    define_method("#{http_method}") do |pattern, controller_class, action_name|
+      p "http_method: #{http_method}"
+      add_route(pattern, http_method, controller_class, action_name)
+    end
   end
 
   def match(req)
+    @routes.each do |route|
+      return route if route.matches?(req)
+    end
+    nil
   end
 
   def run(req, res)
+    p "Router run"
+    p @routes
+    
+    route = match(req)
+
+    if route.nil?
+      res.status = 404
+    else
+      route.run(req, res)
+    end
   end
 end
