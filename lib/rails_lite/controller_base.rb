@@ -12,7 +12,7 @@ public
   def initialize(req, res, route_params={})
     @req = req
     @res = res
-    @params = route_params
+    @params = Params.new(req, route_params)
   end
 
   def session
@@ -20,6 +20,7 @@ public
   end
 
   def already_rendered?
+    @already_built_response
   end
 
   def redirect_to(url)
