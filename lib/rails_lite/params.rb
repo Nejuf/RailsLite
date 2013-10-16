@@ -2,12 +2,12 @@ require 'uri'
 
 class Params
   def initialize(req, route_params)
-    p "Params#initialize"
-    p req.query
-    p req.query_string
-    p req.path
-    p route_params
-    p req.body
+    # p "Params#initialize"
+    # p req.query
+    # p req.query_string
+    # p req.path
+    # p route_params
+    # p req.body
     @params = route_params.merge(req.query)
     unless req.body.nil?
       body_params = parse_www_encoded_form(req.body)

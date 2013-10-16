@@ -13,11 +13,11 @@ class Route
   end
 
   def run(req, res)
-    p "Route Run"
-    p "pattern: #{pattern}"
-    p "captures: #{pattern.match(req.path).captures}"
-    p "named_captures: #{pattern.named_captures}"
-    p "names: #{pattern.names}"
+    # p "Route Run"
+    # p "pattern: #{pattern}"
+    # p "captures: #{pattern.match(req.path).captures}"
+    # p "named_captures: #{pattern.named_captures}"
+    # p "names: #{pattern.names}"
     # named_captures value is an index, so we're better off using #names and #captures
     route_params = {}
     captures = pattern.match(req.path).captures
@@ -40,13 +40,11 @@ class Router
   end
 
   def draw(&proc)
-    p "draw"
     instance_eval &proc
   end
 
   [:get, :post, :put, :delete].each do |http_method|
     define_method("#{http_method}") do |pattern, controller_class, action_name|
-      p "http_method: #{http_method}"
       add_route(pattern, http_method, controller_class, action_name)
     end
   end
@@ -59,9 +57,6 @@ class Router
   end
 
   def run(req, res)
-    p "Router run"
-    p @routes
-    
     route = match(req)
 
     if route.nil?

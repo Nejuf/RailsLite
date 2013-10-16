@@ -2,6 +2,7 @@ require 'erb'
 require 'active_support/core_ext'
 require_relative 'params'
 require_relative 'session'
+require_relative 'flash'
 
 class ControllerBase
   attr_reader :params
@@ -17,6 +18,10 @@ public
 
   def session
     @session ||= Session.new(req)
+  end
+
+  def flash
+    @flash ||= Flash.new(req)
   end
 
   def already_rendered?
@@ -40,6 +45,7 @@ public
     @res.content_type = type
     @res.body = content
     session.store_session(res)
+    flash.store_flash(res)
   end
 
   def render(template_name)
