@@ -24,32 +24,40 @@ public
     @flash ||= Flash.new(req)
   end
 
-  def already_rendered?
+  def already_built_response?
     @already_built_response
   end
 
+  #sets status to 302/redirect Found 
+  #not 301(Moved Permanently) because some browsers will cache the redirect
+  #sets location header to new url
   def redirect_to(url)
-    #sets status to 302/redirect Found 
-    #not 301(Moved Permanently) because some browsers will cache the redirect
-    #sets location header to new url
-    @already_built_response = true
-    #redirect_status = WEBrick::HTTPStatus::TemporaryRedirect
-    #@res.set_redirect(redirect_status, url)
+    raise "double render error" if already_built_response?
+
+      #redirect_status = WEBrick::HTTPStatus::TemporaryRedirect
+      #@res.set_redirect(redirect_status, url)
     @res.header['location'] = url
     @res.status = 302
     session.store_session(res)
+
+    @already_built_response = true
+    nil
   end
 
+  #Technically, it just fills in the response body
   def render_content(content, type)
-    @already_built_response = true
+    raise "double render error" if already_built_response?
+
     @res.content_type = type
     @res.body = content
     session.store_session(res)
     flash.store_flash(res)
+
+    @already_built_response = true
+    nil
   end
 
   def render(template_name)
-    #fill in response body
     controller_name = get_controller_name
     template_contents = File.read("views/#{controller_name}/#{template_name}.html.erb")
     
@@ -59,9 +67,7 @@ public
 
   def invoke_action(name)
     send(name)
-    unless already_rendered?
-      render(name)
-    end
+    render(name) unless already_built_response?
   end
 
   def get_controller_name

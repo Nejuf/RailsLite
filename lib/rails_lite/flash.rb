@@ -3,7 +3,7 @@ require 'webrick'
 
 class Flash < Hash
 
-	COOKIE_NAME = '_rails_lite_app_flash'
+	COOKIE_NAME = '_rails_lite_app_flash'#TODO: Fetch cookie name from a configuration file
 
 	def initialize(req)
 		@req = req

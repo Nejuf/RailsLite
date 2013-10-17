@@ -9,7 +9,7 @@ class Route
   end
 
   def matches?(req)
-    http_method == req.request_method.downcase.to_sym && pattern.match(req.path)
+    (http_method == req.request_method.downcase.to_sym) && (pattern =~ req.path)
   end
 
   def run(req, res)
@@ -23,8 +23,9 @@ class Route
     captures = pattern.match(req.path).captures
     pattern.names.each_with_index do |param_name, index|
       route_params[param_name.to_sym] = captures[index]
-    end    
-    controller_class.new(req, res, route_params).invoke_action(action_name)
+    end  
+
+    @controller_class.new(req, res, route_params).invoke_action(action_name)
   end
 end
 
@@ -50,10 +51,7 @@ class Router
   end
 
   def match(req)
-    @routes.each do |route|
-      return route if route.matches?(req)
-    end
-    nil
+    @routes.find { |route| route.matches?(req) }
   end
 
   def run(req, res)

@@ -2,14 +2,12 @@ require 'json'
 require 'webrick'
 
 class Session
-	COOKIE_NAME = "_rails_lite_app"
+	COOKIE_NAME = "_rails_lite_app"#TODO: Fetch cookie name from a configuration file
+
   def initialize(req)
   	cookie = req.cookies.select{ |cookie| cookie.name == COOKIE_NAME }.first
-		if cookie.nil?
-			@data = {}
-		else
-			@data = JSON.parse(cookie.value)
-		end
+
+    @data = cookie.nil? ? {} : JSON.parse(cookie.value)
   end
 
   #e.g. session[:session_token]
