@@ -73,4 +73,9 @@ public
   def get_controller_name
     self.class.to_s.reverse.gsub("Controller".reverse, "").reverse.underscore.downcase
   end
+
+  #Only non-GET, HTML requests are checked
+  def self.protect_from_forgery
+
+  end
 end
