@@ -34,7 +34,7 @@ public
   def redirect_to(url)
     raise "double render error" if already_built_response?
 
-      #redirect_status = WEBrick::HTTPStatus::TemporaryRedirect
+      #redirect_status = WEBrick::HTTPStatus::TemporaryRedirect #307, not sure how to get a 302 redirect object
       #@res.set_redirect(redirect_status, url)
     @res.header['location'] = url
     @res.status = 302
